@@ -74,7 +74,8 @@ def run_cmd(cmd, err=None):
 def restore_file(file_path):
   """Restore the latest backup."""
   bkps = sorted(glob.glob("%s*.bkp" % file_path))
-  shutil.move(os.path.join(bkps[-1]), file_path)
+  if bkps:
+    shutil.move(os.path.join(bkps[-1]), file_path)
 
 def uninstall():
   """Restore old configuration."""
