@@ -48,6 +48,7 @@ def backup_current_config():
   homedir = os.environ['HOME']
   print "Backup .vimrc"
   backup_file(homedir + "/.vimrc")
+  backup_file(homedir + "/.vim")
 
   print "Backup .bashrc"
   backup_file(homedir + "/.bashrc")
@@ -70,7 +71,8 @@ def restore_old_config():
     print ("Restoring %s from %s") % (filename, files[0]) 
     shutil.move(os.path.join(homedir, files[0]),
 		os.path.join(homedir, filename))
-  restore_file(".vimrc")  
+  restore_file(".vimrc")
+  restore_file(".vim")
   restore_file(".bashrc")
   restore_file(".zshrc")
 
