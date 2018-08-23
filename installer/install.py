@@ -23,7 +23,7 @@ VIMRC = os.path.join(HOME, ".vimrc")
 VIMDIR = os.path.join(HOME, ".vim")
 ZSHRC = os.path.join(HOME, ".zshrc")
 logging.basicConfig(
-    format="%(asctime)s %(name)s %(line)d %(levelname)-8s %(message)s",
+    format="%(asctime)s %(name)s %(lineno)d %(levelname)-8s %(message)s",
     level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
