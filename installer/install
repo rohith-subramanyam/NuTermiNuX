@@ -7,6 +7,8 @@ from pkg_resources import parse_version
 
 """installer for terminux."""
 
+linux_brew_install_needed = False
+
 def get_user_input(display_msg, expected_user_resps):
   """
   """
@@ -17,6 +19,28 @@ def get_user_input(display_msg, expected_user_resps):
     if user_resp in expected_user_resps:
       return user_resp  
     retry += 1
+
+def install_linux_brew():
+  """install linux brew package manager"""
+  status_curl = subprocess.call('sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"', shell=True)
+  if (status_curl != 0):
+    print("curl failed")
+    return
+
+  status_path = subprocess.call("echo 'export PATH=\"/home/linuxbrew/.linuxbrew/bin:$PATH\"' >>~/.profile", shell=True)
+  if (status_path != 0):
+    print("path update failed")
+    return
+
+  status_manpath = subprocess.call("echo 'export MANPATH=\"/home/linuxbrew/.linuxbrew/share/man:$MANPATH\"' >>~/.profile", shell=True)
+  if (status_manpath != 0):
+    print("manpath update failed")
+    return
+
+  status_infopath = subprocess.call("echo 'export INFOPATH=\"/home/linuxbrew/.linuxbrew/share/info:$INFOPATH\"' >>~/.profile", shell=True)
+  if (status_infopath != 0):
+    print("infopath update")
+    return
 
 def main():
   """main function."""
@@ -49,6 +73,10 @@ def main():
     else:	
       sys.exit(1)
     print "\n Found CentOs version 6.10 or newer, continue.."
+
+  """Install LinuxBrew and update the ~/.profile variable."""
+  if (linux_brew_install_needed):
+    install_linux_brew()
 
 if __name__ == "__main__":
   main()
