@@ -82,7 +82,7 @@ def restore_file(file_path):
 def uninstall():
   """Restore old configuration."""
   restore_file(VIMRC)
-  shutil.rmtree(VIMDIR)
+  os.unlink(VIMDIR)
   restore_file(VIMDIR)
   restore_file(BASHRC)
   restore_file(ZSHRC)
