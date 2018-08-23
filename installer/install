@@ -1,9 +1,54 @@
 #!/usr/bin/env python2.7
+import platform
+import subprocess
+import sys
+
+from pkg_resources import parse_version
+
 """installer for terminux."""
+
+def get_user_input(display_msg, expected_user_resps):
+  """
+  """
+  retry = 0
+  max_user_input_retries = 3
+  while retry < max_user_input_retries:
+    user_resp = raw_input(display_msg)
+    if user_resp in expected_user_resps:
+      return user_resp  
+    retry += 1
 
 def main():
   """main function."""
-  pass
+  if platform.dist()[0] != "centos":
+    sys.exit('Terminux is supported only on CentOs machines');  
+
+  # Check if CentOS version is 6.10 or newer.
+  centos_version = platform.dist()[1]
+  terminux_min_supported_version = '7'
+
+  if (parse_version(centos_version) <
+       parse_version(terminux_min_supported_version)):
+    display_msg = ("Terminux requires CentOs 6.10 or newer. Do you want to "
+                   "update? (Y/N)") 
+    expected_user_resps = ['Y', 'y', 'n', 'N']
+    usr_resp = get_user_input(display_msg, expected_user_resps)
+    if usr_resp is None:
+      return	    
+
+    if usr_resp == "Y" or usr_resp == "y":
+      ret = 0  
+      try:
+        output = subprocess.check_output("sudo yum -y update",
+                                         stderr=subprocess.STDOUT,
+                                         shell=True)    
+        print output
+      except subprocess.CalledProcessError as e:  
+        print output
+        sys.exit("CentOs update failed. Exiting terminux")
+    else:	
+      sys.exit(1)
+    print "\n Found CentOs version 6.10 or newer, continue.."
 
 if __name__ == "__main__":
   main()
