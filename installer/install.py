@@ -77,13 +77,15 @@ def run_cmd(cmd, err=None):
 
   return None
 
-def restore(file_path):
+def restore(rpath):
   """Restore the latest backup."""
-  LOGGER.debug("Restoring %s", file_path)
-  bkps = sorted(glob.glob("%s*.bkp" % file_path))
+  if os.path.islink(rpath):
+    os.unlink(rpath)
+  LOGGER.debug("Restoring %s", rpath)
+  bkps = sorted(glob.glob("%s*.bkp" % rpath))
   if bkps:
     LOGGER.debug("backups: %s", bkps)
-    shutil.move(os.path.join(bkps[-1]), file_path)
+    shutil.move(os.path.join(bkps[-1]), rpath)
 
 def uninstall():
   """Restore old configuration."""
@@ -93,8 +95,6 @@ def uninstall():
   _ = run_cmd(uninstall_brew, "Uninstalling brew failed")
 
   restore(VIMRC)
-  if os.path.islink(VIMDIR):
-    os.unlink(VIMDIR)
   restore(VIMDIR)
   restore(BASHRC)
   restore(ZSHRC)
@@ -120,21 +120,21 @@ def setup_terminux_config():
   #os.symlink(os.path.join(dotfiles_dir, "zsh", "terminux_zshrc"), ZSHRC)
   os.symlink(os.path.join(dotfiles_dir, "py", "pylintrc"), PYLINTRC)
 
-def backup(path):
+def backup(bpath):
   """Backup existing user configuration."""
-  if not os.path.exists(path):
+  if not os.path.exists(bpath):
     return
-  LOGGER.info("Backing up %s", path)
-  bkp_path = "%s.%s.bkp" % (path, datetime.datetime.now().strftime(
+  LOGGER.info("Backing up %s", bpath)
+  bkp_path = "%s.%s.bkp" % (bpath, datetime.datetime.now().strftime(
       "%Y-%m-%d_%H:%M:%S"))
-  shutil.move(path, bkp_path)
+  shutil.move(bpath, bkp_path)
 
 def backup_current_config():
   """Backup user's current configuration."""
   backup(VIMRC)
   backup(VIMDIR)
-  backup(BASHRC)
-  backup(ZSHRC)
+  #backup(BASHRC)
+  #backup(ZSHRC)
   backup(PYLINTRC)
 
 def install_vim8():
@@ -159,10 +159,10 @@ def install_linuxbrew():
     LOGGER.critical(err)
     sys.exit(1)
 
-  for lb_dir in [HOME, "/home/linubrew"]:
+  for lb_dir in [HOME, "/home/linuxbrew"]:
     lb_path = os.path.join(lb_dir, ".linuxbrew")
     if os.path.isdir(lb_path):
-      os.environ['PATH'] = "%s%s%s%s%s" % (os.path.join(lb_path, "bin"),
+      os.environ["PATH"] = "%s%s%s%s%s" % (os.path.join(lb_path, "bin"),
                                            os.pathsep,
                                            os.path.join(lb_path, "sbin"),
                                            os.pathsep, os.environ.get("PATH"))
