@@ -67,6 +67,7 @@ def run_cmd(cmd, err=None):
 
   ret = subprocess.call(cmd, shell=True)
   if ret:
+    LOGGER.error("%s exited with %d code", cmd, ret)
     return err
 
   return None
