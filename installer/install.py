@@ -87,7 +87,7 @@ def uninstall():
                     'Homebrew/install/master/uninstall)"')
   _ = run_cmd(uninstall_brew, "Uninstalling brew failed")
   restore_file(VIMRC)
-  if os.path.exists(VIMDIR):
+  if os.path.islink(VIMDIR):
     os.unlink(VIMDIR)
   restore_file(VIMDIR)
   restore_file(BASHRC)
