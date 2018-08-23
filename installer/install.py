@@ -77,7 +77,7 @@ def run_cmd(cmd, err=None):
 
   return None
 
-def restore_file(file_path):
+def restore(file_path):
   """Restore the latest backup."""
   LOGGER.debug("Restoring %s", file_path)
   bkps = sorted(glob.glob("%s*.bkp" % file_path))
@@ -92,12 +92,13 @@ def uninstall():
                     'Homebrew/install/master/uninstall)"')
   _ = run_cmd(uninstall_brew, "Uninstalling brew failed")
 
-  restore_file(VIMRC)
+  restore(VIMRC)
   if os.path.islink(VIMDIR):
     os.unlink(VIMDIR)
-  restore_file(VIMDIR)
-  restore_file(BASHRC)
-  restore_file(ZSHRC)
+  restore(VIMDIR)
+  restore(BASHRC)
+  restore(ZSHRC)
+  restore(PYLINTRC)
 
   if os.path.isfile(PROFILE):
     remove_profile = "sed -i '/linuxbrew/d' %s" % PROFILE
@@ -134,6 +135,7 @@ def backup_current_config():
   backup(VIMDIR)
   backup(BASHRC)
   backup(ZSHRC)
+  backup(PYLINTRC)
 
 def install_vim8():
   """Install latest version of vim using linuxbrew."""
