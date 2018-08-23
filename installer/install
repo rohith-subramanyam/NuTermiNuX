@@ -2,6 +2,7 @@
 import datetime
 import glob
 import os
+import logging
 import platform
 import subprocess
 import sys
@@ -121,7 +122,7 @@ def install_vim():
 
 def main():
   """main function."""
-  if platform.dist()[0] != "centos":
+  if platform.linux_distribution()[0].lower() != "centos":
     sys.exit('Terminux is supported only on CentOs machines');
 
   # Check if CentOS version is 6.10 or newer.
