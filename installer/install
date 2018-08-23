@@ -1,7 +1,11 @@
 #!/usr/bin/env python2.7
+import datetime
+import glob
+import os
 import platform
 import subprocess
 import sys
+import shutil
 
 from pkg_resources import parse_version
 
@@ -25,6 +29,50 @@ def run_cmd(cmd, error_msg):
   ret = subprocess.call(cmd, shell=True)  
   if ret != 0:
     sys.exit(error_msg)  
+
+def backup_current_config():    
+  """
+  Backup the current configuration.
+  """
+  def backup_file(filepath):
+    if not os.path.exists(filepath):	  
+      print "%s does not exist" % filepath	     
+      return	    
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
+    filename = os.path.basename(filepath)
+    dirname = os.path.dirname(filepath)
+    bkp_filepath = filepath+ "." + timestamp + ".bkp"
+    shutil.move(filepath, bkp_filepath)
+
+  print "\nBackup current configuration"
+  homedir = os.environ['HOME']
+  print "Backup .vimrc"
+  backup_file(homedir + "/.vimrc")
+
+  print "Backup .bashrc"
+  backup_file(homedir + "/.bashrc")
+
+  print "Backup .zshrc"
+  backup_file(homedir + "/.zshrc")
+
+def restore_old_config():  
+  """
+  Restore old configuration.
+  """
+  def restore_file(filename):
+    homedir = os.environ['HOME']	  
+    files = glob.glob(homedir + "/" + filename + "*.bkp")  	  
+    files.sort(key=os.path.getmtime)
+    if not files:
+      print ("No backup files found for %s") % filename
+      return	    
+
+    print ("Restoring %s from %s") % (filename, files[0]) 
+    shutil.move(os.path.join(homedir, files[0]),
+		os.path.join(homedir, filename))
+  restore_file(".vimrc")  
+  restore_file(".bashrc")
+  restore_file(".zshrc")
 
 def install_linux_brew():
   """install linux brew package manager"""
@@ -75,6 +123,8 @@ def main():
       sys.exit(1)
 
   print "\nFound CentOs version 6.10 or newer, continue.."
+
+  backup_current_config()
 
   # Install vim.
   install_vim()
