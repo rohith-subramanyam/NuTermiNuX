@@ -1,0 +1,581 @@
+" vim: set foldmethod=marker foldlevel=0:
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Globals {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Source- https://github.com/junegunn/dotfiles/blob/master/vimrc.
+let s:darwin = has('mac')
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TODO {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" temp_workaround {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Search for temp_workaround to find all temp_workaround below.
+" https://github.com/Valloric/YouCompleteMe/issues/3062.
+" https://github.com/vim/vim/issues/3117#issuecomment-406853295.
+if !has('patch-8.1.201')
+  silent! python3 1
+endif
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Automatic installation of plug.vim and plug.vim begin {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Source-
+" https://github.com/junegunn/vim-plug/wiki/faq#automatic-installation.
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+
+""""""""""""""""""""""""""""""""""""""""
+" Source- https://github.com/junegunn/vim-plug#example.
+call plug#begin('~/.vim/plugged')
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Janus stuff {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Source-
+" Also shows the plugins that were part of Janus.
+if !empty(glob('$HOME/gdrive/workspace/dot_files/vim/janus/janus/vim/core/before'))
+  Plug '$HOME/gdrive/workspace/dot_files/vim/janus/janus/vim/core/before'
+elseif !empty(glob('$HOME/Dropbox/workspace/dot_files/vim/janus/janus/vim/core/before'))
+  Plug '$HOME/Dropbox/workspace/dot_files/vim/janus/janus/vim/core/before'
+endif
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugins that set some sane defaults {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'tpope/vim-sensible'
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Additional buffer sections for IDE like feel {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" File managers.
+""""""""""""""""""""""""""""""""""""""""
+" nerdtree.
+" Source- https://github.com/scrooloose/nerdtree#faq.
+" Source- for on: https://github.com/junegunn/dotfiles/blob/master/vimrc.
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" Source- https://c7.se/switching-to-vundle/.
+nmap <leader>n :NERDTreeToggle<CR>
+" Source- https://github.com/scrooloose/nerdtree#faq.
+" Is there any support for git flags?
+Plug 'Xuyuanp/nerdtree-git-plugin'
+" http://learnvimscriptthehardway.stevelosh.com/chapters/14.html.
+augroup NERD
+  autocmd!
+  " How can I open a NERDTree automatically when vim starts up?
+  autocmd vimenter * NERDTree
+  " Keep cursor on the file buffer instead of the NERDTree buffer.
+  " https://github.com/scrooloose/nerdtree/issues/583#issuecomment-221989644.
+  autocmd VimEnter * wincmd p
+  " How can I open a NERDTree automatically when vim starts up if no
+  " files were specified?
+  autocmd StdinReadPre * let s:std_in=1
+  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+  " How can I open NERDTree automatically when vim starts up on opening a
+  " directory?
+  autocmd StdinReadPre * let s:std_in=1
+  autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+  " How can I map a specific key or shortcut to open NERDTree?
+  map <C-n> :NERDTreeToggle<CR>
+  " How can I close vim if the only window left open is a NERDTree?
+  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+augroup END
+
+""""""""""""""""""""
+" Fuzzy finders
+""""""""""""""""""""
+" CtrlP.
+" Notes-
+" https://github.com/kien/ctrlp.vim#basic-usage.
+" Once CtrlP is open-
+" Press <c-f> and <c-b> to cycle between modes.
+" Use <c-t> or <c-v>, <c-x> to open the selected entry in a new tab or in a new split.
+Plug 'ctrlpvim/ctrlp.vim'
+
+""""""""""""""""""""""""""""""""""""""""
+" tagbar.
+" brew install ctags  " for this to work.
+if v:version >= 703
+    Plug 'majutsushi/tagbar'
+    "Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
+endif
+nmap <F8> :TagbarToggle<CR>
+""""""""""""""""""""
+" Do not open in vimdiff.
+" https://github.com/majutsushi/tagbar/issues/358.
+if !&diff
+  " Source-
+  " https://github.com/majutsushi/tagbar/blob/master/doc/tagbar.txt.
+  " Automatically open tagbar if you're opening vim with a supported
+  " file/files.
+  autocmd VimEnter * nested :call tagbar#autoopen(1)
+  " Automatically open tagbar while opening a supported file in an
+  " already running vim.
+  autocmd FileType * nested :call tagbar#autoopen(0)
+  " If you use multiple tabs and want Tagbar to also open in the
+  " current tab when you switch to an already loaded, supported buffer.
+  autocmd BufEnter * nested :call tagbar#autoopen(0)
+endif
+
+""""""""""""""""""""""""""""""""""""""""
+" Statusline
+""""""""""""""""""""""""""""""""""""""""
+" vim-airline
+" https://github.com/vim-airline/vim-airline.
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+let g:airline_powerline_fonts=1
+let g:airline#extensions#tabline#enabled = 1
+" https://github.com/vim-airline/vim-airline/blob/master/doc/airline.txt
+let g:airline#extensions#tabline#buffer_nr_show = 1
+" Uncomment below line to disable bufferline.
+"let g:airline#extensions#bufferline#enabled = 0
+" https://github.com/w0rp/ale#5v-how-can-i-show-errors-or-warnings-in-my-statusline.
+let g:airline#extensions#ale#enabled = 1
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" git related plugins {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim-gitgutter.
+Plug 'airblade/vim-gitgutter'
+" https://github.com/airblade/vim-gitgutter#hunks.
+" ]c and [c- jump to previous and next change markers respectively.
+
+""""""""""""""""""""""""""""""""""""""""
+" Conflict merge tool.
+""""""""""""""""""""""""""""""""""""""""
+" vim-unimpaired.
+" Navigate conflict markers.
+" https://github.com/tpope/vim-unimpaired/blob/master/doc/unimpaired.txt.
+" [n and ]n.
+Plug 'tpope/vim-unimpaired'
+
+""""""""""""""""""""
+" vim-fugitive.
+" http://vimcasts.org/episodes/fugitive-vim-resolving-merge-conflicts-with-vimdiff/
+" Open the file and :Gdiff, which shows 3-way merge.
+Plug 'tpope/vim-fugitive'
+
+""""""""""""""""""""
+" vim-conflicted.
+" https://github.com/christoomey/vim-conflicted#usage
+" Open vim and :Conflicted, which shows 3-way merge.
+Plug 'christoomey/vim-conflicted'
+set stl+=%{ConflictedVersion()}
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugins aiding editing {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" nerdcommenter.
+" https://github.com/scrooloose/nerdcommenter#default-mappings.
+" [count]<leader>cc |NERDComComment|
+" [count]<leader>c<space> |NERDComToggleComment|
+Plug 'scrooloose/nerdcommenter'
+
+""""""""""""""""""""""""""""""""""""""""
+" whitespace management.
+""""""""""""""""""""""""""""""""""""""""
+Plug 'ntpeters/vim-better-whitespace'
+
+""""""""""""""""""""""""""""""""""""""""
+" Indent.
+""""""""""""""""""""""""""""""""""""""""
+Plug 'tpope/vim-sleuth'  " Set shiftwidth and expandtab heuristically.
+
+""""""""""""""""""""
+Plug 'Yggdroot/indentLine'
+" :IndentLinesToggle
+
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Language specific or filetype plugins {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""
+" Python.
+""""""""""""""""""""""""""""""""""""""""
+" python-mode.
+" Documentation-
+" https://github.com/klen/python-mode/blob/develop/doc/pymode.txt.
+Plug 'python-mode/python-mode', {'branch': 'develop'}
+let g:pymode_lint = 0
+let g:pymode_rope = 0
+let g:pymode_rope_completion = 0
+" python-mode uses hynek/vim-python-pep8-indent plugin for indentation.
+" Using that plugin directly for staying most up-to-date.
+" Hence disabling indent in python-mode.
+let g:pymode_indent = 0
+" jedi-vim has the same thing with K.
+let g:pymode_doc = 0
+let g:pymode_breakpoint = 0
+" Essentially using syntax highlighting and python motions
+
+""""""""""""""""""""
+Plug 'hynek/vim-python-pep8-indent'
+
+""""""""""""""""""""""""""""""""""""""""
+" Golang.
+""""""""""""""""""""""""""""""""""""""""
+" https://github.com/fatih/vim-go#install.
+Plug 'fatih/vim-go', {'tag': 'v1.18'}
+" temp_workaround.
+" https://github.com/fatih/vim-go#install.
+" vim-go requires at least Vim 7.4.2009 or Neovim 0.2.2.
+let g:go_version_warning = 0
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Linting {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ALE- Asynchronous lint engine.
+Plug 'w0rp/ale'
+if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
+  " Syntastic.
+  Plug 'scrooloose/syntastic'
+  " https://github.com/scrooloose/syntastic/#3-recommended-settings.
+  set statusline+=%#warningmsg#
+  set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%*
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_auto_loc_list = 1
+  "let g:syntastic_auto_loc_list = 0
+  let g:syntastic_check_on_open = 0
+  let g:syntastic_check_on_wq = 0
+  " pylint is run by syntastic.
+  " :SyntasticCheck runs a syntastic check.
+endif
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Completion {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Supertab
+" Notes-
+" Handles Insert mode completion
+" :help ins-completion.
+" Find out what is the ins-completion function by running
+" :verbose imap <tab>.
+Plug 'ervandew/supertab'
+" https://github.com/ervandew/supertab/blob/master/doc/supertab.txt.
+let g:SuperTabDefaultCompletionType = "context"
+
+""""""""""""""""""""""""""""""""""""""""
+" deoplete.
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  let g:deoplete#enable_at_startup = 1
+elseif v:version >= 800 && has('python3')
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+  let g:deoplete#enable_at_startup = 1
+endif
+
+""""""""""""""""""""
+" completion sources.
+""""""""""""""""""""
+" Python.
+" https://github.com/Shougo/deoplete.nvim/wiki/Completion-Sources.
+Plug 'zchee/deoplete-jedi'
+"let g:deoplete#sources#jedi#python_path = python2.7
+
+""""""""""
+" Golang.
+" https://github.com/zchee/deoplete-go#how-to-install.
+" Run in shell- $ go get -u github.com/nsf/gocode
+"Plug 'zchee/deoplete-go', { 'do': 'make'}
+
+""""""""""""""""""""""""""""""""""""""""
+" jedi-vim.
+" https://github.com/davidhalter/jedi-vim.
+" Notes-
+" https://github.com/davidhalter/jedi-vim#features.
+" ,g- go to assignment (default goto).
+" ,d- go to definition.
+" ,n show all usages of the name.
+" K- show documentation.
+" ctrl-Space- completion.
+Plug 'davidhalter/jedi-vim'
+" https://github.com/davidhalter/jedi-vim#settings.
+" Check 3rd point in
+" https://github.com/davidhalter/jedi-vim#the-completion-is-too-slow.
+" deoplete supported only on Neovim 0.2.0+ or Vim8 with Python3.
+if exists('g:deoplete#enable_at_startup')
+  let g:jedi#completions_enabled = 0
+endif
+
+""""""""""""""""""""""""""""""""""""""""
+" YouCompleteMe.
+" deoplete supported only on Neovim 0.2.0+ or Vim8 with Python3.
+" https://github.com/Valloric/YouCompleteMe#why-does-ycm-demand-such-a-recent-version-of-vim.
+if !exists('g:deoplete#enable_at_startup') && has('patch-7.4.1578')
+  " YouCompleteMe.
+  " brew install cmake.
+  " Source- https://github.com/junegunn/vim-plug#post-update-hooks.
+  function! BuildYCM(info)
+    " info is a dictionary with 3 fields
+    " - name-   name of the plugin
+    " - status- 'installed', 'updated', or 'unchanged'
+    " - force-  set on PlugInstall! or PlugUpdate!
+    if a:info.status == 'installed' || a:info.force
+      " $ cd ~/.vim/plugged/youcompleteme
+      !./install.py --clang-completer --gocode-completer
+    endif
+  endfunction
+  Plug 'valloric/youcompleteme', { 'do': function('BuildYCM') }
+  " Disabling YCM for python. Use jedi-vim instead.
+  " https://github.com/davidhalter/jedi-vim/issues/119#issuecomment-39368962.
+  let g:ycm_filetype_specific_completion_to_disable = { 'python' : 1 }
+  let g:ycm_filetype_blacklist = { 'python' : 1 }
+  " Added this because :verbose imap <tab> was showing ycm and I wanted
+  " it to be supertab.
+  let g:ycm_key_list_select_completion = ['<Down>']
+endif
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" colorscheme plugins {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plug 'altercation/vim-colors-solarized'
+
+""""""""""""""""""""""""""""""""""""""""
+" 24 bit true color colorschemes.
+" https://github.com/iCyMind/NeoSolarized#requirements
+if exists(':set termguicolors')  " Is not present in vim < 7.4.1799
+  set termguicolors  " Needed for 24-bit true colorschemes below.
+endif
+Plug 'iCyMind/NeoSolarized'
+Plug 'morhetz/gruvbox'
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
+" }}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" plug.vim end {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Add plugins to &runtimepath
+call plug#end()
+
+" https://github.com/junegunn/vim-plug/wiki/faq#shouldnt-vim-plug-update-itself-on-plugupdate-like-vundle.
+command! PU PlugUpdate | PlugUpgrade
+"}}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" colorscheme {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" solarized.
+" https://github.com/altercation/vim-colors-solarized#toggle-background-function.
+call togglebg#map("<F5>")
+
+""""""""""""""""""""""""""""""""""""""""
+" NeoSolarized.
+colorscheme NeoSolarized
+
+""""""""""""""""""""""""""""""""""""""""
+" gruvbox.
+"colorscheme gruvbox
+" Add this to your shrc-
+" source "${HOME}"/.vim/plugged/gruvbox/gruvbox_256palette.sh
+
+""""""""""""""""""""""""""""""""""""""""
+"colorscheme onehalfdark
+"}}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" powerline font {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" https://powerline.readthedocs.io/en/latest/usage/other.html#vim-statusline.
+"set rtp+=/usr/local/lib/python2.7/site-packages/powerline/bindings/vim/
+" pip install --user
+"set rtp+=$HOME/Library/Python/2.7/lib/python/site-packages/powerline/bindings/vim/
+"python from powerline.vim import setup as powerline_setup
+"python powerline_setup()
+"python del powerline_setup
+
+""""""""""""""""""""""""""""""""""""""""
+set encoding=utf-8
+set t_Co=256  " Use 256 colors.
+set fillchars+=stl:\ ,stlnc:\
+if exists(':set term')  " Does not exist in nvim.
+  set term=xterm-256color
+endif
+set termencoding=utf-8
+"}}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 80 column guide {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" In Vim 7.3+ a nice alternative is colorcolumn-
+if exists("&colorcolumn")  " Does not exist in nvim.
+    set colorcolumn=80,100 " absolute columns to highlight "
+else
+    augroup vimrc_autocmds
+        autocmd BufEnter * highlight OverLength ctermbg=black guibg=#592929
+        autocmd BufEnter * match OverLength /\%74v.*/
+    augroup END
+endif
+"}}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Mappings {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Press Space to turn off highlighting and clear any message already displayed.
+nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+
+""""""""""""""""""""""""""""""""""""""""
+" set number.
+noremap <F3> :set invnumber<CR>
+inoremap <F3> <C-O>:set invnumber<CR>
+
+""""""""""""""""""""""""""""""""""""""""
+" http://nvie.com/posts/how-i-boosted-my-vim/.
+" Quickly edit/reload the vimrc file.
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
+
+""""""""""""""""""""""""""""""""""""""""
+" http://nvie.com/posts/how-i-boosted-my-vim/.
+";w behaves like :w.
+nnoremap ; :
+cmap w!! w !sudo tee % >/dev/null
+
+""""""""""""""""""""""""""""""""""""""""
+" mapleader.
+" Source- https://github.com/AvinashKrSharma/dotfiles/blob/master/vimrc.
+"let mapleader="\<Space>"
+let mapleader=","
+"}}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Settings {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible  " Necesary for lots of cool vim things.
+set undolevels=1000  " use many muchos levels of undo.
+
+""""""""""""""""""""""""""""""""""""""""
+" https://github.com/AvinashKrSharma/dotfiles/blob/master/vimrc.
+" ----moving around,searching and patterns.
+" http://vim.wikia.com/wiki/Project_browsing_using_find.
+set path=$PWD/**
+" ----displaying text ----
+set linebreak
+" Source- https://github.com/junegunn/dotfiles/blob/master/vimrc.
+if has('patch-7.4.338')
+    let &showbreak = '↳ '
+    set breakindent
+    set breakindentopt=sbr
+endif
+set showbreak=↪
+" ----syntax, highlighting and spelling.
+"set cursorcolumn
+"set cursorline
+" ----multiple windows.
+set splitbelow
+set splitright
+" ----terminal.
+set ttyfast
+set title
+if exists(':set ttymouse')  " Does not exist in nvim.
+    set ttymouse=xterm2
+endif
+" ----messages and info.
+set shortmess=I
+set showcmd
+" ----editing text.
+set complete+=k
+set completeopt=menuone,preview
+set omnifunc=syntaxcomplete#Complete
+set matchpairs+=<:>
+set showmatch
+" ----tabs and indenting.
+set shiftround
+set copyindent
+" ----folding.
+set foldlevel=99
+set foldmethod=syntax
+" ----diff mode.
+set diffopt=filler,vertical
+" ----command line editing.
+set wildcharm=<TAB>
+set wildmode=list:longest,full      " pressing tab takes to next command
+set wildignore=.svn,CVS,.git,.hg,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,*.pyc,*.bak,*.class
+set wildmenu        " show available option in command mode
+" ----multi-byte characters.
+set fileencoding=utf-8
+" ----highlight spell errors.
+hi SpellErrors guibg=red guifg=black ctermbg=red ctermfg=black
+" ----highlight bad words in red.
+hi SpellBad guibg=#ff2929 guifg=#ffffff" ctermbg=224
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+
+""""""""""""""""""""""""""""""""""""""""
+" Indentation.
+" Indent settings for Nutanix code.
+" http://superuser.com/a/598970.
+" Can also use this to have a project vimrc file-
+" https://github.com/embear/vim-localvimrc.
+" Commented since vim-sleuth should detect it anyway.
+"au BufRead,BufNewFile ~/workspace/main/*.py setlocal expandtab shiftwidth=2
+"au BufRead,BufNewFile ~/workspace/main/*.py setlocal softtabstop=-1
+
+""""""""""""""""""""""""""""""""""""""""
+" Source- https://c7.se/switching-to-vundle/.
+" Source- http://vim.wikia.com/wiki/Mac_OS_X_clipboard_sharing.
+set clipboard=unnamed
+set synmaxcol=128
+" http://vimdoc.sourceforge.net/htmldoc/options.html#'ttyscroll'.
+if exists(':set ttyscroll')  " Does not exist in nvim.
+  set ttyscroll=3
+endif
+"}}}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Notes {{{
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Keep the cursor on an URL and click on gx to open it in the browser.
+
+""""""""""""""""""""""""""""""""""""""""
+" Debugging commands.
+" :verbose imap  " to see mappings where they came from
+" :verbose set sw?
+" :echo has('python')
+" :echo v:version
+
+""""""""""""""""""""""""""""""""""""""""
+" Window splits.
+"     Open the current file in vertical split: Ctrl+w, v
+"     Open the current file in horizontal split: Ctrl+w, S
+"     Close the window split: Ctrl+w, q
+"     Navigate between splits: Ctrl+w, h/j/k/l or arrows
+
+""""""""""""""""""""""""""""""""""""""""
+" Profiling/Benchmarking slow vim operations.
+"     " http://stackoverflow.com/a/12216578/5113252
+"     :profile start profile.log
+"     :profile func *
+"     :profile file *
+"     " At this point do slow actions
+"     :profile pause
+"     :noautocmd qall!
+
+""""""""""""""""""""""""""""""""""""""""
+" Log vim startup.
+"     " http://stackoverflow.com/a/12213978/5113252
+"     $ vim -V12log
+
+""""""""""""""""""""""""""""""""""""""""
+" Good source to explore plugins- http://vimawesome.com/.
+"}}}
