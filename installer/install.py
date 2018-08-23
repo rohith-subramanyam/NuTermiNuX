@@ -24,7 +24,7 @@ VIMDIR = os.path.join(HOME, ".vim")
 ZSHRC = os.path.join(HOME, ".zshrc")
 logging.basicConfig(
     format="%(asctime)s %(name)s %(lineno)d %(levelname)-8s %(message)s",
-    level=logging.DEBUG)
+    level=logging.debUG)
 LOGGER = logging.getLogger(__name__)
 
 def query_yes_no(question, default="no"):
@@ -73,7 +73,7 @@ def run_cmd(cmd, err=None):
 
 def restore_file(file_path):
   """Restore the latest backup."""
-  LOGGER.DEBUG("Restoring %s", file_path)
+  LOGGER.debug("Restoring %s", file_path)
   bkps = sorted(glob.glob("%s*.bkp" % file_path))
   if bkps:
     LOGGER.debug("backups: %s", bkps)
