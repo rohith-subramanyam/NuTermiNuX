@@ -81,7 +81,7 @@ def restore_file(file_path):
 
 def uninstall():
   """Restore old configuration."""
-  LOGGER.INFO("Uninstalling linuxbrew")
+  LOGGER.info("Uninstalling linuxbrew")
   uninstall_brew = ('ruby -e "$(curl -fsSL https://raw.githubusercontent.com/'
                     'Homebrew/install/master/uninstall)"')
   _ = run_cmd(uninstall_brew, "Uninstalling brew failed")
