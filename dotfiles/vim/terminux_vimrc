@@ -259,6 +259,14 @@ let g:go_version_warning = 0
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ALE- Asynchronous lint engine.
 Plug 'w0rp/ale'
+let g:ale_linters = {
+\   'cpp': ['cpplint'],
+\   'c': ['cpplint'],
+\   'python': ['pylint'],
+\}
+let g:ale_linters_explicit = 1
+let g:ale_cpp_cpplint_executable = $TOP."/tools/coding-style/cpplint.py"
+let g:ale_python_pylint_options = '--rcfile ~/.pylintrc'
 if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
   " Syntastic.
   Plug 'scrooloose/syntastic'
@@ -273,14 +281,6 @@ if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
   let g:syntastic_check_on_wq = 0
   " pylint is run by syntastic.
   " :SyntasticCheck runs a syntastic check.
-else
-  let g:ale_linters = {
-  \   'cpp': ['cpplint'],
-  \   'c': ['cpplint'],
-  \   'python': ['pylint'],
-  \}
-  let g:ale_linters_explicit = 1
-  let g:ale_cpp_cpplint_executable = $TOP."/tools/coding-style/cpplint.py"
 endif
 " }}}
 
