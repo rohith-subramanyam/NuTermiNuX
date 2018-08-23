@@ -109,7 +109,7 @@ def backup_current_config():
 def install_vim8():
   """Install latest version of vim using linuxbrew."""
   err = run_cmd("brew install vim", "vim installation failed")
-  if err is None:
+  if err is not None:
     LOGGER.critical(err)
     sys.exit(1)
 
