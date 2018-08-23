@@ -264,6 +264,14 @@ if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
   let g:syntastic_check_on_wq = 0
   " pylint is run by syntastic.
   " :SyntasticCheck runs a syntastic check.
+else
+  let g:ale_linters = {
+  \   'cpp': ['cpplint'],
+  \   'c': ['cpplint'],
+  \   'python': ['pylint'],
+  \}
+  let g:ale_linters_explicit = 1
+  let g:ale_cpp_cpplint_executable = $TOP."/tools/coding-style/cpplint.py"
 endif
 " }}}
 
@@ -289,6 +297,7 @@ elseif v:version >= 800 && has('python3')
   Plug 'Shougo/deoplete.nvim'
   Plug 'roxma/nvim-yarp'
   Plug 'roxma/vim-hug-neovim-rpc'
+  Plug 'zchee/deoplete-clang'
   let g:deoplete#enable_at_startup = 1
 endif
 
@@ -305,6 +314,14 @@ Plug 'zchee/deoplete-jedi'
 " https://github.com/zchee/deoplete-go#how-to-install.
 " Run in shell- $ go get -u github.com/nsf/gocode
 "Plug 'zchee/deoplete-go', { 'do': 'make'}
+
+""""""""""
+" C++
+" https://github.com/zchee/deoplete-clang#how-to-install
+let g:deoplete#sources#clang#libclang_path = "/opt/cross/clang-6.0.1/lib64/libclang.so"
+let g:deoplete#sources#clang#clang_header = "/opt/cross/clang-6.0.1/lib64/clang/6.0.1/include"
+let g:deoplete#sources#clang#std#cpp = 'c++14'
+let g:deoplete#sources#clang#clang_complete_database = $TOP."/build/compile_commands.json"
 
 """"""""""""""""""""""""""""""""""""""""
 " jedi-vim.
