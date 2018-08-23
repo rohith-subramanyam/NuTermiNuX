@@ -1,5 +1,8 @@
+"""Installer for terminux."""
 #!/usr/bin/env python2.7
+
 import datetime
+import distutils.version
 import glob
 import os
 import logging
@@ -8,161 +11,178 @@ import subprocess
 import sys
 import shutil
 
-from pkg_resources import parse_version
 
-"""installer for terminux."""
+CENTOS = "CentOS"
+MIN_VERSION = "6.9"
+NUTERMINUX = "NuTermiNuX"
+BREWDIR = "/home/linuxbrew/.linuxbrew/bin"
+HOME = os.environ["HOME"]
+BASHRC = os.path.join(HOME, ".bashrc")
+VIMRC = os.path.join(HOME, ".vimrc")
+VIMDIR = os.path.join(HOME, ".vim")
+ZSHRC = os.path.join(HOME, ".zshrc")
+logging.basicConfig(format="%(asctime)s %(name)s %(levelname)-8s %(message)s",
+                    level=logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
 
-linux_brew_install_needed = False
+def query_yes_no(question, default="no"):
+  """Ask a yes/no question via raw_input() and return their answer.
 
-def get_user_input(display_msg, expected_user_resps):
+  "question" is a string that is presented to the user.
+  "default" is the presumed answer if the user just hits <Enter>.
+      It must be "yes" (the default), "no" or None (meaning
+      an answer is required of the user).
+
+  The "answer" return value is True for "yes" or False for "no".
   """
-  Get user input.
-  """
-  retry = 0
-  max_user_input_retries = 3
-  while retry < max_user_input_retries:
-    user_resp = raw_input(display_msg)
-    if user_resp in expected_user_resps:
-      return user_resp
-    retry += 1
+  valid = {"yes": True, "y": True, "ye": True,
+           "no": False, "n": False}
+  if default is None:
+    prompt = " [y/n] "
+  elif default == "yes":
+    prompt = " [Y/n] "
+  elif default == "no":
+    prompt = " [y/N] "
+  else:
+    raise ValueError("invalid default answer: '%s'" % default)
 
-def run_cmd(cmd, error_msg):
+  while True:
+    sys.stdout.write("%s%s" % (question, prompt))
+    choice = raw_input().lower()
+    if default is not None and choice == '':
+      return valid[default]
+    elif choice in valid:
+      return valid[choice]
+    else:
+      sys.stdout.write("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
+
+def run_cmd(cmd, err=None):
+  """Run the shell command and return err in case of a failure."""
+  LOGGER.debug("Running %s", cmd)
+
+  if err is None:
+    err = "'%s' failed" % cmd
+
   ret = subprocess.call(cmd, shell=True)
-  if ret != 0:
-    sys.exit(error_msg)
+  if ret:
+    return err
+
+  return None
+
+def restore_file(file_path):
+  """Restore the latest backup."""
+  bkps = sorted(glob.glob("%s*.bkp" % file_path))
+  shutil.move(os.path.join(bkps[-1]), file_path)
+
+def restore_old_config():
+  """Restore old configuration."""
+  restore_file(VIMRC)
+  restore_file(VIMDIR)
+  restore_file(BASHRC)
+  restore_file(ZSHRC)
 
 def setup_terminux_config():
-  """
-  Setup terminux configuration.
-  """
-  installer_dir_path = os.path.dirname(os.path.realpath(__file__))
-  config_dir_path = os.path.join(os.path.dirname(installer_dir_path),
-                           "dotfiles")
+  """Setup terminux configuration."""
+  dotfiles_dir = os.path.join(os.path.dirname(os.path.dirname(
+      os.path.realpath(__file__))), "dotfiles")
+  os.symlink(os.path.join(dotfiles_dir, "vim", "terminux_vimrc"), VIMRC)
+  #os.symlink(os.path.join(dotfiles_dir, "bash", "terminux_bashrc"), BASHRC)
+  #os.symlink(os.path.join(dotfiles_dir, "zsh", "terminux_zshrc"), ZSHRC)
 
-  vimrc_filepath = os.path.join(config_dir_path, "vim", "terminux_vimrc")
-  if os.path.exists(vimrc_filepath):
-    os.symlink(vimrc_filepath, os.path.join(os.environ['HOME'], ".vimrc"))
-
-  bashrc_filepath = os.path.join(config_dir_path, "bash", "terminux_bashrc")
-  if os.path.exists(bashrc_filepath):
-    os.symlink(bashrc_filepath, os.path.join(os.environ['HOME'], ".bashrc"))
-
-  zshrc_filepath = os.path.join(config_dir_path, "zsh", "terminux_zshrc")
-  if os.path.exists(zshrc_filepath):
-    os.symlink(zshrc_filepath, os.path.join(os.environ['HOME'], ".zshrc"))
+def backup_file(file_path):
+  """Backup existing user configuration."""
+  if not os.path.exists(file_path):
+    return
+  LOGGER.info("Backing up %s", file_path)
+  bkp_file_path = "%s.%s.bkp" % (file_path,
+                                 datetime.datetime.now().strftime(
+                                     "%Y-%m-%d_%H:%M:%S"))
+  shutil.move(file_path, bkp_file_path)
 
   vim_dirpath = os.path.join(config_dir_path, "vim", "vim")
   if os.path.exists(vim_dirpath):
     os.symlink(vim_dirpath, os.path.join(os.environ['HOME'], ".vim"))
 
 def backup_current_config():
-  """
-  Backup the current configuration.
-  """
-  def backup_file(filepath):
-    if not os.path.exists(filepath):
-      return
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-    filename = os.path.basename(filepath)
-    dirname = os.path.dirname(filepath)
-    bkp_filepath = filepath+ "." + timestamp + ".bkp"
-    shutil.move(filepath, bkp_filepath)
+  """Backup user's current configuration."""
+  backup_file(VIMRC)
+  backup_file(VIMDIR)
+  backup_file(BASHRC)
+  backup_file(ZSHRC)
 
-  print "\nBackup current configuration"
-  homedir = os.environ['HOME']
-  print "Backup .vimrc"
-  backup_file(homedir + "/.vimrc")
+def install_vim8():
+  """Install latest version of vim using linuxbrew."""
+  err = run_cmd("brew install vim", "vim installation failed")
+  if err is None:
+    LOGGER.critical(err)
+    sys.exit(1)
 
-  print "Backup .vim"
-  backup_file(homedir + "/.vim")
+def install_linuxbrew():
+  """Install linuxbrew package manager."""
+  check = "brew --help >/dev/null 2>&1"
+  err = run_cmd(check)
+  if err is None:
+    LOGGER.info("brew already installed")
+    return
 
-  print "Backup .bashrc"
-  backup_file(homedir + "/.bashrc")
+  install = ('sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/'
+             'install/master/install.sh)"')
+  err = run_cmd(install, "Linuxbrew install failed")
+  if err is not None:
+    LOGGER.critical(err)
+    sys.exit(1)
 
-  print "Backup .zshrc"
-  backup_file(homedir + "/.zshrc")
+  path1 = ('test -d ~/.linuxbrew && PATH="${HOME}/.linuxbrew/bin:${HOME}/'
+           '.linuxbrew/sbin:${PATH}"')
+  _ = run_cmd(path1)
 
-def restore_old_config():
-  """
-  Restore old configuration.
-  """
-  def restore_file(filename):
-    homedir = os.environ['HOME']
-    files = glob.glob(homedir + "/" + filename + "*.bkp")
-    files.sort(key=os.path.getmtime)
-    if not files:
-      print ("No backup files found for %s") % filename
-      return
+  path2 = ('test -d /home/linuxbrew/.linuxbrew && PATH="/home/linuxbrew/'
+           '.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"')
+  _ = run_cmd(path2)
 
-    print ("Restoring %s from %s") % (filename, files[0])
-    shutil.move(os.path.join(homedir, files[0]),
-    os.path.join(homedir, filename))
-  restore_file(".vimrc")
-  restore_file(".vim")
-  restore_file(".bashrc")
-  restore_file(".zshrc")
+  bash = ('test -r ~/.bash_profile && echo "export PATH=\'$(brew --prefix)/bin'
+          ':$(brew --prefix)/sbin\'":\'"$PATH"\' >> ~/.bash_profile')
+  _ = run_cmd(bash)
 
-def install_linux_brew():
-  """install linux brew package manager"""
-  print "Installing linux brew"
-  brew_install_cmd = 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"'
-  run_cmd(brew_install_cmd, "curl failed")
+  prof = ('echo "export PATH=\'$(brew --prefix)/bin:$(brew --prefix)/sbin\'":'
+          '\'"$PATH"\' >> ~/.profile')
+  _ = run_cmd(prof)
 
-  path_update_cmd = "echo 'export PATH=\"/home/linuxbrew/.linuxbrew/bin:$PATH\"' >>~/.profile"
-  run_cmd(path_update_cmd, "path update failed")
+  zprof = ('echo "export PATH=\'$(brew --prefix)/bin:$(brew --prefix)/sbin\'":'
+           '\'"$PATH"\' >> ~/.zprofile')
+  _ = run_cmd(zprof)
 
-  path_update_cmd = "echo 'export MANPATH=\"/home/linuxbrew/.linuxbrew/share/man:$MANPATH\"' >>~/.profile"
-  run_cmd(path_update_cmd, "manpath update failed")
+  hello = "brew install hello"
+  _ = run_cmd(hello)
 
-  path_update_cmd = "echo 'export INFOPATH=\"/home/linuxbrew/.linuxbrew/share/info:$INFOPATH\"' >>~/.profile"
-  run_cmd(path_update_cmd, "infopath update")
+def centos_version():
+  """Check OS is CentOS and CentOS version."""
+  linux_dist = platform.linux_distribution()
+  if linux_dist[0].lower() != CENTOS.lower():
+    LOGGER.critical("%s is supported only on %s", NUTERMINUX, CENTOS)
+    sys.exit(1)
 
-def install_vim():
-  """
-  Install latest version of vim using linux brew.
-  """
-  print "Installing vim using linux brew"
-  cmd = "brew install vim"
-  run_cmd(cmd, "vim installation failed")
-  print "\nvim installation completed successfully"
+  if (distutils.version.StrictVersion(linux_dist[1]) <
+      distutils.version.StrictVersion(MIN_VERSION)):
+    logging.warning("%s requires at least %s %s", NUTERMINUX, CENTOS,
+                    MIN_VERSION)
+    if query_yes_no("Do you want to 'yum update' (requires sudo)?"):
+      err = run_cmd("sudo yum -y update", "yum update failed")
+      if err is not None:
+        LOGGER.critical(err)
+        sys.exit(1)
+    else:
+      sys.exit(0)
+>>>>>>> Installer
 
 def main():
   """main function."""
-  if platform.linux_distribution()[0].lower() != "centos":
-    sys.exit('Terminux is supported only on CentOs machines');
-
-  # Check if CentOS version is 6.10 or newer.
-  centos_version = platform.dist()[1]
-  terminux_min_supported_version = '6.10'
-
-  if (parse_version(centos_version) <
-       parse_version(terminux_min_supported_version)):
-    display_msg = ("Terminux requires CentOs 6.10 or newer. Do you want to "
-                   "update? (Y/N)")
-    expected_user_resps = ['Y', 'y', 'n', 'N']
-    usr_resp = get_user_input(display_msg, expected_user_resps)
-    if usr_resp is None:
-      return
-
-    if usr_resp == "Y" or usr_resp == "y":
-      cmd = "sudo yum -y update"
-      run_cmd(cmd, "CentOs update failed. Exiting terminux")
-    else:
-      sys.exit(1)
-
-  print "\nFound CentOs version 6.10 or newer, continue.."
-
+  centos_version()
+  install_linuxbrew()
+  install_vim8()
   backup_current_config()
-
   setup_terminux_config()
   # restore_old_config()
-
-  # Install vim.
-  install_vim()
-
-  """Install LinuxBrew and update the ~/.profile variable."""
-  if (linux_brew_install_needed):
-    install_linux_brew()
 
 if __name__ == "__main__":
   main()
