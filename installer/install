@@ -22,22 +22,41 @@ def get_user_input(display_msg, expected_user_resps):
   while retry < max_user_input_retries:
     user_resp = raw_input(display_msg)
     if user_resp in expected_user_resps:
-      return user_resp  
+      return user_resp
     retry += 1
 
-def run_cmd(cmd, error_msg):    
-  ret = subprocess.call(cmd, shell=True)  
+def run_cmd(cmd, error_msg):
+  ret = subprocess.call(cmd, shell=True)
   if ret != 0:
-    sys.exit(error_msg)  
+    sys.exit(error_msg)
 
-def backup_current_config():    
+def setup_terminux_config():
+  """
+  Setup terminux configuration.
+  """
+  installer_dir_path = os.path.dirname(os.path.realpath(__file__))
+  config_dir_path = os.path.join(os.path.dirname(installer_dir_path),
+                           "dotfiles")
+
+  vimrc_filepath = os.path.join(config_dir_path, "vim", "terminux_vimrc")
+  if os.path.exists(vimrc_filepath):
+    os.symlink(vimrc_filepath, os.path.join(os.environ['HOME'], ".vimrc"))
+
+  bashrc_filepath = os.path.join(config_dir_path, "bash", "terminux_bashrc")
+  if os.path.exists(bashrc_filepath):
+    os.symlink(bashrc_filepath, os.path.join(os.environ['HOME'], ".bashrc"))
+
+  zshrc_filepath = os.path.join(config_dir_path, "zsh", "terminux_zshrc")
+  if os.path.exists(zshrc_filepath):
+    os.symlink(zshrc_filepath, os.path.join(os.environ['HOME'], ".zshrc"))
+
+def backup_current_config():
   """
   Backup the current configuration.
   """
   def backup_file(filepath):
-    if not os.path.exists(filepath):	  
-      print "%s does not exist" % filepath	     
-      return	    
+    if not os.path.exists(filepath):
+      return
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
     filename = os.path.basename(filepath)
     dirname = os.path.dirname(filepath)
@@ -56,21 +75,21 @@ def backup_current_config():
   print "Backup .zshrc"
   backup_file(homedir + "/.zshrc")
 
-def restore_old_config():  
+def restore_old_config():
   """
   Restore old configuration.
   """
   def restore_file(filename):
-    homedir = os.environ['HOME']	  
-    files = glob.glob(homedir + "/" + filename + "*.bkp")  	  
+    homedir = os.environ['HOME']
+    files = glob.glob(homedir + "/" + filename + "*.bkp")
     files.sort(key=os.path.getmtime)
     if not files:
       print ("No backup files found for %s") % filename
-      return	    
+      return
 
-    print ("Restoring %s from %s") % (filename, files[0]) 
+    print ("Restoring %s from %s") % (filename, files[0])
     shutil.move(os.path.join(homedir, files[0]),
-		os.path.join(homedir, filename))
+    os.path.join(homedir, filename))
   restore_file(".vimrc")
   restore_file(".vim")
   restore_file(".bashrc")
@@ -98,12 +117,12 @@ def install_vim():
   print "Installing vim using linux brew"
   cmd = "brew install vim"
   run_cmd(cmd, "vim installation failed")
-  print "\nvim installation completed successfully"  
+  print "\nvim installation completed successfully"
 
 def main():
   """main function."""
   if platform.dist()[0] != "centos":
-    sys.exit('Terminux is supported only on CentOs machines');  
+    sys.exit('Terminux is supported only on CentOs machines');
 
   # Check if CentOS version is 6.10 or newer.
   centos_version = platform.dist()[1]
@@ -112,21 +131,23 @@ def main():
   if (parse_version(centos_version) <
        parse_version(terminux_min_supported_version)):
     display_msg = ("Terminux requires CentOs 6.10 or newer. Do you want to "
-                   "update? (Y/N)") 
+                   "update? (Y/N)")
     expected_user_resps = ['Y', 'y', 'n', 'N']
     usr_resp = get_user_input(display_msg, expected_user_resps)
     if usr_resp is None:
-      return	    
+      return
 
     if usr_resp == "Y" or usr_resp == "y":
-      cmd = "sudo yum -y update"  
+      cmd = "sudo yum -y update"
       run_cmd(cmd, "CentOs update failed. Exiting terminux")
-    else:	
+    else:
       sys.exit(1)
 
   print "\nFound CentOs version 6.10 or newer, continue.."
 
   backup_current_config()
+
+  setup_terminux_config()
 
   # Install vim.
   install_vim()
