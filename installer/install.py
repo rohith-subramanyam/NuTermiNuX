@@ -157,13 +157,13 @@ def install_linuxbrew():
     LOGGER.critical(err)
     sys.exit(1)
 
-  path1 = ('test -d ~/.linuxbrew && PATH="${HOME}/.linuxbrew/bin:${HOME}/'
-           '.linuxbrew/sbin:${PATH}"')
-  _ = run_cmd(path1)
-
-  path2 = ('test -d /home/linuxbrew/.linuxbrew && PATH="/home/linuxbrew/'
-           '.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"')
-  _ = run_cmd(path2)
+  for lb_dir in [HOME, "/home/linubrew"]:
+    lb_path = os.path.join(lb_dir, ".linuxbrew")
+    if os.path.isdir(lb_path):
+      os.environ['PATH'] = "%s%s%s%s%s" % (os.path.join(lb_path, "bin"),
+                                           os.pathsep,
+                                           os.path.join(lb_path, "sbin"),
+                                           os.pathsep, os.environ.get("PATH"))
 
   bash = ('test -r ~/.bash_profile && echo "export PATH=\'$(brew --prefix)/bin'
           ':$(brew --prefix)/sbin\'":\'"$PATH"\' >> ~/.bash_profile')
