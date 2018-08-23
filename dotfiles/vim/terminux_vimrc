@@ -211,6 +211,16 @@ Plug 'Yggdroot/indentLine'
 """"""""""""""""""""""""""""""""""""""""
 " Include cscope maps
 source ~/.vim/cscope_maps.vim
+function! GenerateTags()
+    execute ":silent !rm ".$TOP."/cscope.*"
+    execute ":silent !find ".$TOP." -name *.h > ".$TOP."/cscope.files"
+    execute ":silent !find ".$TOP." -name *.cc >> ".$TOP."/cscope.files"
+    execute ":silent !find ".$TOP." -name *.proto > ".$TOP."cscope.files"
+    execute ":silent !/usr/bin/ctags -L ".$TOP."/cscope.files"
+    execute ":silent !cscope -b -q"
+    execute ":redraw"
+endfunction
+nmap <C-/>c :call GenerateTags()<cr>
 
 """"""""""""""""""""""""""""""""""""""""
 " Python.
