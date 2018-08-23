@@ -22,6 +22,11 @@ BASHRC = os.path.join(HOME, ".bashrc")
 VIMRC = os.path.join(HOME, ".vimrc")
 VIMDIR = os.path.join(HOME, ".vim")
 ZSHRC = os.path.join(HOME, ".zshrc")
+PYLINTRC = os.path.join(HOME, ".pylintrc")
+PROFILE = os.path.join(HOME, ".profile")
+BPROFILE = os.path.join(HOME, ".bash_profile")
+ZPROFILE = os.path.join(HOME, ".zprofile")
+
 logging.basicConfig(
     format="%(asctime)s %(name)s %(lineno)d %(levelname)-8s %(message)s",
     level=logging.DEBUG)
@@ -86,12 +91,23 @@ def uninstall():
   uninstall_brew = ('ruby -e "$(curl -fsSL https://raw.githubusercontent.com/'
                     'Homebrew/install/master/uninstall)"')
   _ = run_cmd(uninstall_brew, "Uninstalling brew failed")
+
   restore_file(VIMRC)
   if os.path.islink(VIMDIR):
     os.unlink(VIMDIR)
   restore_file(VIMDIR)
   restore_file(BASHRC)
   restore_file(ZSHRC)
+
+  if os.path.isfile(PROFILE):
+    remove_profile = "sed -i '/linuxbrew/d' %s" % PROFILE
+    _ = run_cmd(remove_profile)
+  if os.path.isfile(BPROFILE):
+    remove_bprofile = "sed -i '/linuxbrew/d' %s" % BPROFILE
+    _ = run_cmd(remove_bprofile)
+  if os.path.isfile(ZPROFILE):
+    remove_zprofile = "sed -i '/linuxbrew/d' %s" % ZPROFILE
+    _ = run_cmd(remove_zprofile)
 
 def setup_terminux_config():
   """Setup terminux configuration."""
@@ -101,6 +117,7 @@ def setup_terminux_config():
   os.symlink(os.path.join(dotfiles_dir, "vim", "vim"), VIMDIR)
   #os.symlink(os.path.join(dotfiles_dir, "bash", "terminux_bashrc"), BASHRC)
   #os.symlink(os.path.join(dotfiles_dir, "zsh", "terminux_zshrc"), ZSHRC)
+  os.symlink(os.path.join(dotfiles_dir, "py", "pylintrc"), PYLINTRC)
 
 def backup(path):
   """Backup existing user configuration."""
