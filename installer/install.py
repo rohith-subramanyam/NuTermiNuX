@@ -1,5 +1,5 @@
-"""Installer for terminux."""
 #!/usr/bin/env python2.7
+"""Installer for terminux."""
 
 import datetime
 import distutils.version
@@ -98,10 +98,6 @@ def backup_file(file_path):
                                  datetime.datetime.now().strftime(
                                      "%Y-%m-%d_%H:%M:%S"))
   shutil.move(file_path, bkp_file_path)
-
-  vim_dirpath = os.path.join(config_dir_path, "vim", "vim")
-  if os.path.exists(vim_dirpath):
-    os.symlink(vim_dirpath, os.path.join(os.environ['HOME'], ".vim"))
 
 def backup_current_config():
   """Backup user's current configuration."""
