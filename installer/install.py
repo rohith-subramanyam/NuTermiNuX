@@ -144,6 +144,11 @@ def install_vim8():
     LOGGER.critical(err)
     sys.exit(1)
 
+  err = run_cmd("pip3 install --upgrade neovim")
+  if err is not None:
+    LOGGER.warning("Failed installing neovim. Your vim plugins might not work "
+                   "as expected")
+
 def install_linuxbrew():
   """Install linuxbrew package manager."""
   check = "brew --help >/dev/null 2>&1"
