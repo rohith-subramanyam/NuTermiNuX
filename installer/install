@@ -11,6 +11,7 @@ linux_brew_install_needed = False
 
 def get_user_input(display_msg, expected_user_resps):
   """
+  Get user input.
   """
   retry = 0
   max_user_input_retries = 3
@@ -20,27 +21,34 @@ def get_user_input(display_msg, expected_user_resps):
       return user_resp  
     retry += 1
 
+def run_cmd(cmd, error_msg):    
+  ret = subprocess.call(cmd, shell=True)  
+  if ret != 0:
+    sys.exit(error_msg)  
+
 def install_linux_brew():
   """install linux brew package manager"""
-  status_curl = subprocess.call('sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"', shell=True)
-  if (status_curl != 0):
-    print("curl failed")
-    return
+  print "Installing linux brew"
+  brew_install_cmd = 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"'
+  run_cmd(brew_install_cmd, "curl failed")
 
-  status_path = subprocess.call("echo 'export PATH=\"/home/linuxbrew/.linuxbrew/bin:$PATH\"' >>~/.profile", shell=True)
-  if (status_path != 0):
-    print("path update failed")
-    return
+  path_update_cmd = "echo 'export PATH=\"/home/linuxbrew/.linuxbrew/bin:$PATH\"' >>~/.profile"
+  run_cmd(path_update_cmd, "path update failed")
 
-  status_manpath = subprocess.call("echo 'export MANPATH=\"/home/linuxbrew/.linuxbrew/share/man:$MANPATH\"' >>~/.profile", shell=True)
-  if (status_manpath != 0):
-    print("manpath update failed")
-    return
+  path_update_cmd = "echo 'export MANPATH=\"/home/linuxbrew/.linuxbrew/share/man:$MANPATH\"' >>~/.profile"
+  run_cmd(path_update_cmd, "manpath update failed")
 
-  status_infopath = subprocess.call("echo 'export INFOPATH=\"/home/linuxbrew/.linuxbrew/share/info:$INFOPATH\"' >>~/.profile", shell=True)
-  if (status_infopath != 0):
-    print("infopath update")
-    return
+  path_update_cmd = "echo 'export INFOPATH=\"/home/linuxbrew/.linuxbrew/share/info:$INFOPATH\"' >>~/.profile"
+  run_cmd(path_update_cmd, "infopath update")
+
+def install_vim():
+  """
+  Install latest version of vim using linux brew.
+  """
+  print "Installing vim using linux brew"
+  cmd = "brew install vim"
+  run_cmd(cmd, "vim installation failed")
+  print "\nvim installation completed successfully"  
 
 def main():
   """main function."""
@@ -49,7 +57,7 @@ def main():
 
   # Check if CentOS version is 6.10 or newer.
   centos_version = platform.dist()[1]
-  terminux_min_supported_version = '7'
+  terminux_min_supported_version = '6.10'
 
   if (parse_version(centos_version) <
        parse_version(terminux_min_supported_version)):
@@ -61,18 +69,15 @@ def main():
       return	    
 
     if usr_resp == "Y" or usr_resp == "y":
-      ret = 0  
-      try:
-        output = subprocess.check_output("sudo yum -y update",
-                                         stderr=subprocess.STDOUT,
-                                         shell=True)    
-        print output
-      except subprocess.CalledProcessError as e:  
-        print output
-        sys.exit("CentOs update failed. Exiting terminux")
+      cmd = "sudo yum -y update"  
+      run_cmd(cmd, "CentOs update failed. Exiting terminux")
     else:	
       sys.exit(1)
-    print "\n Found CentOs version 6.10 or newer, continue.."
+
+  print "\nFound CentOs version 6.10 or newer, continue.."
+
+  # Install vim.
+  install_vim()
 
   """Install LinuxBrew and update the ~/.profile variable."""
   if (linux_brew_install_needed):
