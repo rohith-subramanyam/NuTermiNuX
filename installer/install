@@ -173,7 +173,6 @@ def centos_version():
         sys.exit(1)
     else:
       sys.exit(0)
->>>>>>> Installer
 
 def main():
   """main function."""
