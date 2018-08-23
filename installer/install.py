@@ -82,7 +82,8 @@ def restore_file(file_path):
 def uninstall():
   """Restore old configuration."""
   restore_file(VIMRC)
-  os.unlink(VIMDIR)
+  if os.path.exists(VIMDIR):
+    os.unlink(VIMDIR)
   restore_file(VIMDIR)
   restore_file(BASHRC)
   restore_file(ZSHRC)
@@ -92,25 +93,25 @@ def setup_terminux_config():
   dotfiles_dir = os.path.join(os.path.dirname(os.path.dirname(
       os.path.realpath(__file__))), "dotfiles")
   os.symlink(os.path.join(dotfiles_dir, "vim", "terminux_vimrc"), VIMRC)
+  os.symlink(os.path.join(dotfiles_dir, "vim", "vim"), VIMDIR)
   #os.symlink(os.path.join(dotfiles_dir, "bash", "terminux_bashrc"), BASHRC)
   #os.symlink(os.path.join(dotfiles_dir, "zsh", "terminux_zshrc"), ZSHRC)
 
-def backup_file(file_path):
+def backup(path):
   """Backup existing user configuration."""
-  if not os.path.exists(file_path):
+  if not os.path.exists(path):
     return
-  LOGGER.info("Backing up %s", file_path)
-  bkp_file_path = "%s.%s.bkp" % (file_path,
-                                 datetime.datetime.now().strftime(
-                                     "%Y-%m-%d_%H:%M:%S"))
-  shutil.move(file_path, bkp_file_path)
+  LOGGER.info("Backing up %s", path)
+  bkp_path = "%s.%s.bkp" % (path, datetime.datetime.now().strftime(
+      "%Y-%m-%d_%H:%M:%S"))
+  shutil.move(path, bkp_path)
 
 def backup_current_config():
   """Backup user's current configuration."""
-  backup_file(VIMRC)
-  backup_file(VIMDIR)
-  backup_file(BASHRC)
-  backup_file(ZSHRC)
+  backup(VIMRC)
+  backup(VIMDIR)
+  backup(BASHRC)
+  backup(ZSHRC)
 
 def install_vim8():
   """Install latest version of vim using linuxbrew."""
