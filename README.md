@@ -1,2 +1,2 @@
-# NuTermiNuX
+# NuTermiNiX
 Terminal configuration for Nutanix
