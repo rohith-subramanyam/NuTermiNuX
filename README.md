@@ -1,3 +1,3 @@
 <!-- # NuTermiNuX
 Terminal configuration for Nutanix--!>
-![alt text](images/NuTermiNuX.png)
+![Alt text](images/NuTermiNuX.png "logo")
