@@ -1,2 +1,3 @@
-# NuTermiNuX
-Terminal configuration for Nutanix
+<!-- # NuTermiNuX
+Terminal configuration for Nutanix--!>
+![alt text](image/NuTermiNuX.png)
