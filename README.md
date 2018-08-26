@@ -1,3 +1,3 @@
 <!-- # NuTermiNuX
 Terminal configuration for Nutanix--!>
-![NuTermiNuX](/images/NuTermiNuX.png)
+![NuTermiNuX](nuterminux/images/NuTermiNuX.png)
