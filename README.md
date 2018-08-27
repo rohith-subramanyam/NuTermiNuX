@@ -71,6 +71,12 @@ Ctrl-t  " to go back.
 " For cscope to set the indexes run
 :call GenerateTags()  " Key binding <C-/>c
 ```
+### 3-way merge of merge conflicts
+```vim
+" Open vim and
+:Conflicted
+" Fix the merge conflicts and
+:GitNextConflict  " to cycle through all the conflicted files.
 ### Some other cool things to make you feel like a vim ninja
 ```vim
 ,cc  " to comment a VISUAL block or a line.
