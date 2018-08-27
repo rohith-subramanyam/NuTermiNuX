@@ -42,13 +42,7 @@ call plug#begin('~/.vim/plugged')
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Janus stuff {{{
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Source-
-" Also shows the plugins that were part of Janus.
-if !empty(glob('$HOME/gdrive/workspace/dot_files/vim/janus/janus/vim/core/before'))
-  Plug '$HOME/gdrive/workspace/dot_files/vim/janus/janus/vim/core/before'
-elseif !empty(glob('$HOME/Dropbox/workspace/dot_files/vim/janus/janus/vim/core/before'))
-  Plug '$HOME/Dropbox/workspace/dot_files/vim/janus/janus/vim/core/before'
-endif
+Plug '$HOME/.vim/plugged/janus'
 " }}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

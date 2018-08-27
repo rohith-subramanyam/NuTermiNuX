@@ -155,6 +155,15 @@ def setup_nuterminux_config():
                              # % NUTERMINUX.lower()), ZSHRC)
   force_symlink(os.path.join(dotfiles_dir, "py", "pylintrc"), PYLINTRC)
 
+def plug_install():
+  """PlugInstalls all the plugins."""
+  LOGGER.info("Installing vim plugins")
+
+  err = run_cmd("vim +'PlugInstall --sync' +qa",
+                "vim plugins installation failed")
+  if err is not None:
+    LOGGER.warning(err)
+
 def backup(bpath):
   """Backup existing user configuration."""
   if not os.path.exists(bpath):
@@ -304,6 +313,7 @@ def main():
   install_vim8()
   backup_current_config()
   setup_nuterminux_config()
+  plug_install()
 
   LOGGER.info("Install successfull. Welcome to %s", NUTERMINUX)
 

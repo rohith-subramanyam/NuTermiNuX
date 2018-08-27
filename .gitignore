@@ -1,3 +1,4 @@
 *.swp
+.DS_Store
 dotfiles/vim/vim/autoload
 dotfiles/vim/vim/plugged
