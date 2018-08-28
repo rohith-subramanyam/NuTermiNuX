@@ -107,7 +107,7 @@ Ctrl-t  " to go back.
 ```
 ## Hey, I want to keep a few of my own custom settings for vim!
 Sure, we respect that. Add all your own custom settings to "${HOME}/.vimrc.after" and we will read it.
-## Update && Upgrades
+## Update and Upgrades
 If you want to update, it as as easy as
 ```shell
 $ cd nuterminux  # Change to your cloned directory.
