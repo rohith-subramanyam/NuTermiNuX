@@ -5,10 +5,10 @@
 ### Code browsing
 ![OpenGrok meme](../assets/images/Code_browsing_OpenGrok_meme.jpg)<br/>
 Do you use {OpenGrok to browse Nutanix code base? Do you like it? It is not accurate and does not work all the time as it does not completely understand the semantics of some of the programming languages we use here at Nutanix like Python and Go. Many times, it is simply a git grep over the code base.
-![OpenGrok gif](../assets/images/Code_browsing_OpenGrok.gif)
+![OpenGrok gif](../assets/images/Code_browsing_OpenGrok_10fps.gif)
 
 With **N**u**T**ermni**N**u**X**, you can jump into definitions or declarations, including standard library or thirdparty library code wherever the source is available. It setups up paths required for Clang, Go and Python.<br/>
-![Code browsing NuTermiNuX gif](../assets/images/Code_browsing_NuTermiNuX.gif)
+![Code browsing NuTermiNuX gif](../assets/images/Code_browsing_NuTermiNuX_10fps.gif)
 ### Maintaining code quality
 ![Lint indent meme](../assets/images/Lint_indent_meme.jpg)<br/>
 It is a good practice and accepted convention to run linters on our code before submitting them for code review. Except for Clang, in which the upload to gerrit script enforces that no new lint error is added, it is not strictly enforced except during code reviews. Whether they are allowed to commit or not depends on the discretion of the code reviewer and is too late in the workflow and acts as a deterrent for the developer to fix it. It is easier for the reviewer to focus on the business logic when the code submitted for review is free of lint warnings and errors and all the code is vetted by the same set of tools configured the same way.
@@ -30,7 +30,7 @@ For Clang, we use Google's cpplint modified for Nutanix style that is used by th
 ### Other inefficiences
 When working on a large repository like main, you have to jump into multiple files to use other libraries or dependencies. This is very inefficient as it messes up the context in your head.
 **N**u**T**ermni**N**u**X** provides code completion and can complete standard libraries, thirdparty libraries and Nutanix code as well.
-![Code completion gif](../assets/images/Completion.gif)
+![Code completion gif](../assets/images/Completion_10fps.gif)
 #### Merge conflicts
 Do you sweat each time you have to resovle a complex merge conflict? **N**u**T**ermni**N**u**X** provides you a method to perform a 3-way merge showing you the upstream copy on the left, the working copy at the center and the local copy on the right. This makes resolve complex merge conflicts a walk in the park. Sweet!
 ## Currently Supported:
