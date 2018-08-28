@@ -18,6 +18,7 @@ BREWDIR = "/home/linuxbrew/.linuxbrew/bin"
 CENTOS = "CentOS"
 MIN_VERSION = "6.9"
 NUTERMINUX = "NuTermiNuX"
+PIP = "pip"
 
 HOME = os.environ["HOME"]
 PYLINTRC = os.path.join(HOME, ".pylintrc")
@@ -203,7 +204,7 @@ def install_vim8():
   """Install latest version of vim using linuxbrew."""
   LOGGER.info("Installing vim 8")
 
-  err = run_cmd("brew install vim", "vim installation failed")
+  err = run_cmd("%s install vim" % BREW)
   if err is not None:
     LOGGER.critical(err)
     sys.exit(1)
@@ -212,23 +213,27 @@ def install_vim8():
 
   nvm = "neovim"
   nvp = "%s python client" % nvm
-  LOGGER.debug("Installing %s", nvp)
-  err = run_cmd("pip3 install --upgrade %s" % nvm)
+  LOGGER.debug("%s3 installing %s", PIP, nvp)
+  err = run_cmd("%s3 install --upgrade %s" % (PIP, nvm))
   if err is not None:
-    LOGGER.warning("Failed installing %s. %s", nvp, msg)
+    LOGGER.warning("%s. %s", err, msg)
 
   py2 = "python@2"
-  LOGGER.debug("Installing the brewed version of %s", py2)
-  err = run_cmd("brew install %s" % py2, "%s installation failed" % py2)
+  err = run_cmd("%s install %s" % (BREW, py2))
   if err is not None:
-    LOGGER.warning("Failed %s installing %s. %s", BREW, py2, msg)
+    LOGGER.warning("%s. %s", err, msg)
 
   ctags = "ctags"
   if which(ctags) is None:
-    LOGGER.debug("Installing the brewed version of %s", ctags)
-    err = run_cmd("brew install %s" % ctags, "%s installation failed" % ctags)
+    err = run_cmd("%s install %s" % (BREW, ctags))
     if err is not None:
-      LOGGER.warning("Failed %s installing %s. %s", BREW, ctags, msg)
+      LOGGER.warning("%s. %s", err, msg)
+
+  pylint = "pylint"
+  if which(pylint) is None:
+    err = run_cmd("%s install %s" % (PIP, pylint))
+    if err is not None:
+      LOGGER.warning("%s. %s", err, msg)
 
 def install_linuxbrew():
   """Install linuxbrew package manager."""
