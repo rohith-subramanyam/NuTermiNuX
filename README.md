@@ -20,10 +20,11 @@ The common reasons given for not running a linter are:
 ### Other inefficiences
 When working on a large repository like main, you have to jump into multiple files to use other libraries or dependencies. This is very inefficient as it messes up the context in your head.
 **N**u**T**ermni**N**u**X** provides code completion and can complete standard libraries, thirdparty libraries and Nutanix code as well.
-Some of the other inefficiences are:
+![Code completion gif](images/Completion_640px.gif)
+<br/>Some of the other inefficiences are:
 #### Merge conflicts
 Do you sweat each time you have to resovle a complex merge conflict? **N**u**T**ermni**N**u**X** provides you a method to perform a 3-way merge showing you the upstream copy on the left, the working copy at the center and the local copy on the right. This makes resolve complex merge conflicts a walk in the park. Sweet!
-![Code completion gif](Completion_640px.gif)
+
 ## Currently Supported:
 * VIM
 * Languages
