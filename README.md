@@ -27,12 +27,15 @@ The common reasons given for not running a linter are:
 **N**u**T**ermni**N**u**X** adds a linter right into your editor. You see lint warning and errors everytime you open a file and updates in real-time as you edit the file. You don't have to leave the editor to fix lint warnings and errors. The linter runs asynchronously and does not block your editing or browsing, so you don't see ghost characters appear seconds after you type. With **N**u**T**ermni**N**u**X**, not only are you more likely to not introduce any new lint warning and errors, you are also more likely to be a good samaritan and fix the existing lint errors if you see them disappear in real-time as you fix them.
 For Clang, we use Google's cpplint modified for Nutanix style that is used by the upload review to gerrit script.<br/>
 ![Lint nolint meme](../assets/images/Lint_NuTermiNuX_nolint.jpg)
-### Other inefficiencies
+### Code completion
 When working on a large repository like main, you have to jump into multiple files to use other libraries or dependencies. This is very inefficient as it messes up the context in your head.
 **N**u**T**ermni**N**u**X** provides code completion and can complete standard libraries, thirdparty libraries and Nutanix code as well.
 ![Code completion gif](../assets/images/Completion_10fps.gif)
+### Other inefficiencies
 #### Merge conflicts
 Do you sweat each time you have to resovle a complex merge conflict? **N**u**T**ermni**N**u**X** provides you a method to perform a 3-way merge showing you the upstream copy on the left, the working copy at the center and the local copy on the right. This makes resolve complex merge conflicts a walk in the park. Sweet!
+#### Dev VM
+The dev VMs are not set up for working with Nutanix code base. Every one has to spend time to setup their environment so that they can get started. It is a waste of time. With **N**u**T**ermni**N**u**X**, it sets up everything including the dependencies, required tools and configurations for you to be that Nutanix Superhero you can be. And it just works. You code using the latest vim on your dev vm which support async APIs. All your plugins don't interrupt your editing or browsing. No more lags and it is slick. You jump into functions definitions like it is a walk in the park. You see lint errors in real-time as you type. Your editor completes code for you & you don't have to lookup that API's signature. Your VM is setup for Nutanix code base for you to get going with Nutanix code right from the word go.
 ## Currently Supported:
 * VIM
 * Languages
@@ -46,6 +49,7 @@ $ cat /etc/centos-release
 CentOS release 6.9 (Final)
 ```
 ## Install
+Like everything at Nutanix, it is simple and 1-click.
 ```shell
 $ git clone https://drt-it-github-prod-1.eng.nutanix.com/hackathon-2018/nuterminux.git
 $ # or
