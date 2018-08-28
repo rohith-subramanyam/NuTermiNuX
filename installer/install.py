@@ -65,19 +65,17 @@ def query_yes_no(question, default="no"):
     else:
       sys.stdout.write("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
 
-def run_cmd(cmd, err=None, quiet=False):
+def run_cmd(cmd, err=None):
   """Run the shell command and return err in case of a failure."""
-  if not quiet:
-    LOGGER.debug("Running %s", cmd)
+  LOGGER.debug("Running %s", cmd)
 
   if err is None:
     err = "'%s' failed" % cmd
 
   ret = subprocess.call(cmd, shell=True)
   if ret:
-    if not quiet:
-      LOGGER.error("%s exited with %d code", cmd, ret)
-      return err
+    LOGGER.error("%s exited with %d code", cmd, ret)
+    return err
 
   return None
 
@@ -236,16 +234,14 @@ def install_linuxbrew():
   """Install linuxbrew package manager."""
   LOGGER.debug("Checking if %s is already installed.", BREW)
 
-  check = "brew --help >/dev/null 2>&1"
-  err = run_cmd(check, quiet=True)
-  if err is None:
+  if which("%s" % BREW) is not None:
     LOGGER.info("%s is already installed", BREW)
     return
 
   LOGGER.info("Installing linux%s", BREW)
   install = ('sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/'
              'install/master/install.sh)"')
-  err = run_cmd(install, "Linuxbrew install failed")
+  err = run_cmd(install, "Linux%s install failed" % BREW)
   if err is not None:
     LOGGER.critical(err)
     sys.exit(1)
