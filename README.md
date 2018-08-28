@@ -27,7 +27,7 @@ The common reasons given for not running a linter are:
 **N**u**T**ermni**N**u**X** adds a linter right into your editor. You see lint warning and errors everytime you open a file and updates in real-time as you edit the file. You don't have to leave the editor to fix lint warnings and errors. The linter runs asynchronously and does not block your editing or browsing, so you don't see ghost characters appear seconds after you type. With **N**u**T**ermni**N**u**X**, not only are you more likely to not introduce any new lint warning and errors, you are also more likely to be a good samaritan and fix the existing lint errors if you see them disappear in real-time as you fix them.
 For Clang, we use Google's cpplint modified for Nutanix style that is used by the upload review to gerrit script.<br/>
 ![Lint nolint meme](../assets/images/Lint_NuTermiNuX_nolint.jpg)
-### Other inefficiences
+### Other inefficiencies
 When working on a large repository like main, you have to jump into multiple files to use other libraries or dependencies. This is very inefficient as it messes up the context in your head.
 **N**u**T**ermni**N**u**X** provides code completion and can complete standard libraries, thirdparty libraries and Nutanix code as well.
 ![Code completion gif](../assets/images/Completion_10fps.gif)
