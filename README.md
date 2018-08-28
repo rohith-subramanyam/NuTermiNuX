@@ -78,6 +78,7 @@ Ctrl-t  " to go back.
 :Conflicted
 " Fix the merge conflicts and
 :GitNextConflict  " to cycle through all the conflicted files.
+```
 ### Some other cool things to make you feel like a vim ninja
 ```vim
 ,cc  " to comment a VISUAL block or a line.
@@ -93,15 +94,32 @@ Ctrl-t  " to go back.
 :Gcommit
 " ...
 ```
+## Hey, I want to keep a few of my own custom settings for vim!
+Sure, we respect that. Add all your own custom settings to "${HOME}/.vimrc.after" and we will read it.
+## Update && Upgrades
+If you want to update, it as as easy as
+```shell
+$ cd nuterminux  # Change to your cloned directory.
+$ git fetch origin
+$ get rebase origin/master
+```
+We will let you know how to upgrade as and when we add more and more features mentioned in What next? section.
 ## Uninstall
 We think you will love us and we will stay in your terminal forever, but if for some reason you don't like us?
 ```shell
 $ cd nuterminux
+$ echo "Do not run the uninstall as sudo!"
 $ ./installer/install.py --uninstall
 ```
 We cleanly rollback all the changes we made to your system and discard ourselves completely. We also restore all your configuration and you are back to where you were before you ran the installer.
+## What next?
+* If you opt-in, we will add some Nutanix swag to your terminal. How cool will it be if a random ASCII art figure told you a Nutanix principle each time you opened a new session, reminding us what Nutanix stands for.
+[!Nutanix ASCII](images/nutanix_ascii.jpg)
+* Setting up PYTHONPATH, GOPATH and any other universal environment setup to work with Nutanix code base
+* Support for emacs
+* If you opt-in, we will install shell configuration to make your terminal more functional. We will support bash and zsh.
 ## Questions? Feedback?
-Ask on #nuterminux on Nutanix Slack.
+Ask on Slack: #nuterminux
 ## Authors
 [Rohith Subramanyam](mailto:rohith.subramanyam@nutanix.com)<br/>
 [Anshul Purohit](mailto:anshul.purohit@nutanix.com)<br/>
