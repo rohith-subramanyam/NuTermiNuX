@@ -122,7 +122,7 @@ $ ./installer/install.py --uninstall
 We cleanly rollback all the changes we made to your system and discard ourselves completely. We also restore all your configuration and you are back to where you were before you ran the installer.
 ## What next?
 * If you opt-in, we will add some Nutanix swag to your terminal. How cool will it be if a random ASCII art figure told you a Nutanix principle each time you opened a new session, reminding us what Nutanix stands for.
-[!Nutanix ASCII](../assets/images/nutanix_ascii.jpg)
+![Nutanix ASCII](../assets/images/nutanix_ascii.jpg)
 * Setting up PYTHONPATH, GOPATH and any other universal environment setup to work with Nutanix code base
 * Support for emacs
 * If you opt-in, we will install shell configuration to make your terminal more functional. We will support bash and zsh.
