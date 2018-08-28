@@ -3,7 +3,7 @@
 ## What is it?
 **N**u**T**ermni**N**u**X** is terminal and editors configuration for working with Nutanix code base. It helps to eliminate a few inefficiencies that exist today when contributing to or simple browsing through the code base. What are those inefficiencies and how does **N**u**T**ermni**N**u**X** solve them?
 ### Code browsing
-![OpenGrok meme](images/Code_browsing_OpenGrok_meme.jpg)
+![OpenGrok meme](images/Code_browsing_OpenGrok_meme.jpg)<br/>
 Do you use {OpenGrok to browse Nutanix code base? Do you like it? It is not accurate and does not work all the time as it does not completely understand the semantics of some of the programming languages we use here at Nutanix like Python and Go. Many times, it is simply a git grep over the code base.
 ![OpenGrok gif](images/Code_browsing_OpenGrok_640px.gif)
 
