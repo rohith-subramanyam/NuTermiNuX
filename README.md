@@ -132,7 +132,7 @@ We cleanly rollback all the changes we made to your system and discard ourselves
 * Support for emacs
 * If you opt-in, we will install shell configuration to make your terminal more functional. We will support bash and zsh.
 ## Questions? Feedback?
-Ask on Slack: #nuterminux
+Ask on Slack: [#nuterminux](https://nutanix.slack.com/messages/nuterminux/)
 ## Authors
 [Rohith Subramanyam](mailto:rohith.subramanyam@nutanix.com)<br/>
 [Anshul Purohit](mailto:anshul.purohit@nutanix.com)<br/>
