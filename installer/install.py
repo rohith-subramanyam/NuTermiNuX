@@ -280,7 +280,7 @@ def centos_version():
   LOGGER.debug("Checking prerequisite %s version", CENTOS)
 
   linux_dist = platform.linux_distribution()
-  if CENTOS.lower() in linux_dist[0].lower():
+  if linux_dist[0].lower().startswith(CENTOS.lower()):
     LOGGER.critical("%s is supported only on %s", NUTERMINUX, CENTOS)
     sys.exit(1)
 
