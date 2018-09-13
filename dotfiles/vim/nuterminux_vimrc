@@ -261,21 +261,30 @@ let g:ale_linters = {
 let g:ale_linters_explicit = 1
 let g:ale_cpp_cpplint_executable = $TOP."/tools/coding-style/cpplint.py"
 let g:ale_python_pylint_options = '--rcfile ~/.pylintrc'
-if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
-  " Syntastic.
-  Plug 'scrooloose/syntastic'
-  " https://github.com/scrooloose/syntastic/#3-recommended-settings.
-  set statusline+=%#warningmsg#
-  set statusline+=%{SyntasticStatuslineFlag()}
-  set statusline+=%*
-  let g:syntastic_always_populate_loc_list = 1
-  let g:syntastic_auto_loc_list = 1
-  "let g:syntastic_auto_loc_list = 0
-  let g:syntastic_check_on_open = 0
-  let g:syntastic_check_on_wq = 0
-  " pylint is run by syntastic.
-  " :SyntasticCheck runs a syntastic check.
-endif
+
+""""""""""""""""""""""""""""""""""""""""
+" https://github.com/w0rp/ale#5vii-how-can-i-change-the-format-for-echo-messages
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_info_str = 'I'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] (%code%): %s [%severity%]'
+
+""""""""""""""""""""""""""""""""""""""""
+"if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
+  "" Syntastic.
+  "Plug 'scrooloose/syntastic'
+  "" https://github.com/scrooloose/syntastic/#3-recommended-settings.
+  "set statusline+=%#warningmsg#
+  "set statusline+=%{SyntasticStatuslineFlag()}
+  "set statusline+=%*
+  "let g:syntastic_always_populate_loc_list = 1
+  "let g:syntastic_auto_loc_list = 1
+  ""let g:syntastic_auto_loc_list = 0
+  "let g:syntastic_check_on_open = 0
+  "let g:syntastic_check_on_wq = 0
+  "" pylint is run by syntastic.
+  "" :SyntasticCheck runs a syntastic check.
+"endif
 " }}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
