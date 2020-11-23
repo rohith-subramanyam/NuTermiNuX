@@ -51,9 +51,12 @@ CentOS release 6.9 (Final)
 ## Install
 Like everything at Nutanix, it is simple and 1-click.
 ```shell
-$ git clone https://drt-it-github-prod-1.eng.nutanix.com/hackathon-2018/nuterminux.git
+$ git clone https://github.com/rohith-subramanyam/NuTermiNuX.git
 $ # or
-$ git clone git@drt-it-github-prod-1.eng.nutanix.com:hackathon-2018/nuterminux.git
+$ git clone git@github.com:rohith-subramanyam/NuTermiNuX.git
+$ # or
+$ # If you have the github CLI: https://cli.github.com/
+$ gh repo clone rohith-subramanyam/NuTermiNuX
 $ cd nuterminux
 $ ./installer/install.py && source "${HOME}/.profile"
 $ echo "Do not sweat! All your configurations are backed up and you can rollback"
