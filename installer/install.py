@@ -244,8 +244,8 @@ def install_linuxbrew():
     return
 
   LOGGER.info("Installing linux%s", BREW)
-  install = ('sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/'
-             'install/master/install.sh)"')
+  install = ('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/'
+             'Homebrew/install/HEAD/install.sh)"')
   err = run_cmd(install, "Linux%s install failed" % BREW)
   if err is not None:
     LOGGER.critical(err)
