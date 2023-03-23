@@ -166,7 +166,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 " Uncomment below line to disable bufferline.
 "let g:airline#extensions#bufferline#enabled = 0
-" https://github.com/w0rp/ale#5v-how-can-i-show-errors-or-warnings-in-my-statusline.
+" https://github.com/dense-analysis/ale#vim-airline.
 let g:airline#extensions#ale#enabled = 1
 " }}}
 
@@ -281,6 +281,8 @@ Plug 'fatih/vim-go', {'tag': 'v1.28'}
 " Linting {{{
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ALE- Asynchronous lint engine.
+" Notes-
+" Ctrl+j and Ctrl+k to cycle through lint warnings and errors.
 Plug 'dense-analysis/ale'
 let g:ale_linters = {
 \   'cpp': ['cpplint'],
