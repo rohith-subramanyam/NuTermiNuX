@@ -272,7 +272,7 @@ Plug 'hynek/vim-python-pep8-indent'
 " Golang.
 """"""""""""""""""""""""""""""""""""""""
 " https://github.com/fatih/vim-go#install.
-Plug 'fatih/vim-go', {'tag': 'v1.28'}
+Plug 'fatih/vim-go', {'tag': 'v1.28', 'do': ':GoUpdateBinaries'}
 "
 " Check https://github.com/fatih/vim-go/wiki/Tutorial for tutorial.
 " }}}
