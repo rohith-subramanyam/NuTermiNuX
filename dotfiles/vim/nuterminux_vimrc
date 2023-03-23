@@ -289,7 +289,6 @@ let g:ale_linters = {
 \   'c': ['cpplint'],
 \   'python': ['pylint'],
 \}
-let g:ale_linters_explicit = 1
 let g:ale_cpp_cpplint_executable = $TOP."/tools/coding-style/cpplint.py"
 let g:ale_python_pylint_options = '--rcfile ~/.pylintrc'
 
@@ -299,6 +298,11 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_info_str = 'I'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] (%code%): %s [%severity%]'
+
+""""""""""""""""""""""""""""""""""""""""
+" https://github.com/dense-analysis/ale#how-can-i-navigate-between-errors-quickly.
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 """"""""""""""""""""""""""""""""""""""""
 "if !exists(':ALELint')  " Supported only on NeoVim 0.2.0+ or Vim 8.
