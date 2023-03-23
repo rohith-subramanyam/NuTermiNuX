@@ -272,18 +272,14 @@ Plug 'hynek/vim-python-pep8-indent'
 " Golang.
 """"""""""""""""""""""""""""""""""""""""
 " https://github.com/fatih/vim-go#install.
-Plug 'fatih/vim-go', {'tag': 'v1.18'}
-" temp_workaround.
-" https://github.com/fatih/vim-go#install.
-" vim-go requires at least Vim 7.4.2009 or Neovim 0.2.2.
-let g:go_version_warning = 0
+Plug 'fatih/vim-go', {'tag': 'v1.28'}
 " }}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Linting {{{
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ALE- Asynchronous lint engine.
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 let g:ale_linters = {
 \   'cpp': ['cpplint'],
 \   'c': ['cpplint'],
