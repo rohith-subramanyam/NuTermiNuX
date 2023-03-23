@@ -58,34 +58,58 @@ Plug 'tpope/vim-sensible'
 """"""""""""""""""""""""""""""""""""""""
 " nerdtree.
 " Source- https://github.com/scrooloose/nerdtree#faq.
-" Source- for on: https://github.com/junegunn/dotfiles/blob/master/vimrc.
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-" Source- https://c7.se/switching-to-vundle/.
-nmap <leader>n :NERDTreeToggle<CR>
-" Source- https://github.com/scrooloose/nerdtree#faq.
-" Is there any support for git flags?
+Plug 'preservim/nerdtree'
+
+" https://github.com/preservim/nerdtree#nerdtree-plugins.
 Plug 'Xuyuanp/nerdtree-git-plugin'
-" http://learnvimscriptthehardway.stevelosh.com/chapters/14.html.
-augroup NERD
-  autocmd!
-  " How can I open a NERDTree automatically when vim starts up?
-  autocmd vimenter * NERDTree
-  " Keep cursor on the file buffer instead of the NERDTree buffer.
-  " https://github.com/scrooloose/nerdtree/issues/583#issuecomment-221989644.
-  autocmd VimEnter * wincmd p
-  " How can I open a NERDTree automatically when vim starts up if no
-  " files were specified?
-  autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-  " How can I open NERDTree automatically when vim starts up on opening a
-  " directory?
-  autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-  " How can I map a specific key or shortcut to open NERDTree?
-  map <C-n> :NERDTreeToggle<CR>
-  " How can I close vim if the only window left open is a NERDTree?
-  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-augroup END
+
+" How can I map a specific key or shortcut to open NERDTree?
+" https://github.com/preservim/nerdtree#how-can-i-map-a-specific-key-or-shortcut-to-open-nerdtree.
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+" Commenting below because <C-f> is used to scroll to next page along with
+" <C-b>, which is used to scroll to previous page.
+nnoremap <C-f> :NERDTreeFind<CR>
+
+if !&diff
+  " For augroup: http://learnvimscriptthehardway.stevelosh.com/chapters/14.html.
+  augroup NERD
+    autocmd!
+    " How do I open NERDTree automatically when Vim starts?
+    " https://github.com/preservim/nerdtree#how-do-i-open-nerdtree-automatically-when-vim-starts.
+    "" Start NERDTree and leave the cursor in it.
+    "autocmd VimEnter * NERDTree
+    "" Start NERDTree and put the cursor back in the other window.
+    "autocmd VimEnter * NERDTree | wincmd p
+    "" Start NERDTree when Vim is started without file arguments.
+    autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+    "" Start NERDTree. If a file is specified, move the cursor to its window.
+    "autocmd StdinReadPre * let s:std_in=1
+    "autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
+    "" Start NERDTree, unless a file or session is specified, eg. vim -S session_file.vim.
+    "autocmd StdinReadPre * let s:std_in=1
+    "autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' |
+    "    \ NERDTree | endif
+    " Start NERDTree when Vim starts with a directory argument.
+    autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+        \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+
+    " How can I close Vim or a tab automatically when NERDTree is the last window?
+    " Exit Vim if NERDTree is the only window remaining in the only tab.
+    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+    " Close the tab if NERDTree is the only window remaining in it.
+    autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+    " How can I prevent other buffers replacing NERDTree in its window?
+    " https://github.com/preservim/nerdtree#how-can-i-prevent-other-buffers-replacing-nerdtree-in-its-window.
+    " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+    autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+        \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+  augroup END
+endif
 
 """"""""""""""""""""
 " Fuzzy finders
@@ -630,4 +654,17 @@ endif
 
 """"""""""""""""""""""""""""""""""""""""
 " Good source to explore plugins- http://vimawesome.com/.
+
+""""""""""""""""""""""""""""""""""""""""
+" Issues.
+"       When both NERDTree and Tagbar are toggled on, and the only remaining
+"       main buffer is closed will throw the below error and one more :q
+"       command has to be issued.
+"       """Error detected while processing WinEnter Autocommands for "*"..function
+"       <SNR>136_HandleOnlyWindow[13]..<SNR>136_CloseWindow:
+"       line   43:
+"       E1312: Not allowed to change the window layout in this autocmd"""
+"       This is due to a change introduced in patch 9.0.0907. Check:
+"       https://groups.google.com/g/vim_dev/c/Cw8McBH6DDM.
+"
 "}}}
