@@ -273,6 +273,8 @@ Plug 'hynek/vim-python-pep8-indent'
 """"""""""""""""""""""""""""""""""""""""
 " https://github.com/fatih/vim-go#install.
 Plug 'fatih/vim-go', {'tag': 'v1.28'}
+"
+" Check https://github.com/fatih/vim-go/wiki/Tutorial for tutorial.
 " }}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
