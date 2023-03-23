@@ -70,7 +70,7 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 " Commenting below because <C-f> is used to scroll to next page along with
 " <C-b>, which is used to scroll to previous page.
-nnoremap <C-f> :NERDTreeFind<CR>
+"nnoremap <C-f> :NERDTreeFind<CR>
 
 if !&diff
   " For augroup: http://learnvimscriptthehardway.stevelosh.com/chapters/14.html.
