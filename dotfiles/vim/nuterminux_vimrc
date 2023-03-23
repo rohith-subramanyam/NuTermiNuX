@@ -120,7 +120,14 @@ if !&diff
   autocmd FileType * nested :call tagbar#autoopen(0)
   " If you use multiple tabs and want Tagbar to also open in the
   " current tab when you switch to an already loaded, supported buffer.
-  autocmd BufEnter * nested :call tagbar#autoopen(0)
+  " Commenting below line because it would throw the error on TagbarClose or
+  " TagbarToggle when TagBar is open:
+  " Error detected while processing function tagbar#ToggleWindow[2]..
+  " <SNR>84_ToggleWindow[5]..<SNR>84_CloseWindow[43]..BufEnter Autocommands for
+  " "*"..function tagbar#autoopen[10]..<SNR>84_OpenWindow:
+  " line   67:
+  " E242: Can't split a window while closing another
+  "autocmd BufEnter * nested :call tagbar#autoopen(0)
 endif
 
 """"""""""""""""""""""""""""""""""""""""
